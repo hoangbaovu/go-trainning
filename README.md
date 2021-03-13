@@ -1,0 +1,2 @@
+# go-trainning
+Learning golang
