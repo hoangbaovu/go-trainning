@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"encoding/json"
 	"io/ioutil"
 	"log"
@@ -30,6 +31,7 @@ func main() {
 	router := mux.NewRouter()
 
 	router.HandleFunc("/testget", testGet)
+	router.HandleFunc("/testpost", testPost).Methods("POST")
 	router.HandleFunc("/test", test)
 
 	router.HandleFunc("/post", getAllPosts).Methods("GET")
@@ -59,6 +61,25 @@ func testGet(w http.ResponseWriter, r *http.Request) {
 	//Convert the body to type string
 	// sb := string(body)
 	// log.Printf(sb)
+	w.Write(body)
+}
+
+func testPost(w http.ResponseWriter, r *http.Request) {
+	values := map[string]string{
+		"login":    "",
+		"password": "",
+	}
+
+	jsonValue, _ := json.Marshal(values)
+
+	resp, _ := http.Post("", "application/json", bytes.NewBuffer(jsonValue))
+
+	//Read the response body
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	w.Header().Set("Content-Type", "application/json")
 	w.Write(body)
 }
 
